@@ -3,5 +3,7 @@
 # MIT license applies.  See "license.txt" for details.
 
 ADD_EXECUTABLE (DarkPlate main.cpp)
+
+find_library(DARKHELP darkhelp.lib)
 TARGET_LINK_LIBRARIES (DarkPlate PRIVATE Threads::Threads ${DARKHELP} ${DARKNET} ${OpenCV_LIBS})
 

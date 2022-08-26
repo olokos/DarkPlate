@@ -112,14 +112,14 @@ void process_plate(DarkHelp::NN & nn, cv::Mat & frame, const DarkHelp::Predictio
 {
 	cv::Rect roi = prediction.rect;
 
-	if (roi.width < 1 or roi.height < 1)
+	if (roi.width < 1 || roi.height < 1)
 	{
 		std::cout << "-> ignoring impossibly small plate (x=" << roi.x << " y=" << roi.y << " w=" << roi.width << " h=" << roi.height << ")" << std::endl;
 		return;
 	}
 
 	// increase the RoI to match the network dimensions, but stay within the bounds of the frame
-	if (roi.width >= network_size.width or roi.height >= network_size.height)
+	if (roi.width >= network_size.width || roi.height >= network_size.height)
 	{
 		// something is wrong with this plate, since it seems to be the same size or bigger than the original frame size!
 		std::cout << "-> ignoring too-big plate (x=" << roi.x << " y=" << roi.y << " w=" << roi.width << " h=" << roi.height << ")" << std::endl;
@@ -205,7 +205,7 @@ void process(DarkHelp::NN & nn, const std::string & filename)
 	std::cout	<< "-> " << static_cast<size_t>(width) << " x " << static_cast<size_t>(height) << " @ " << fps << " FPS" << std::endl
 				<< "-> " << frames << " frames (" << static_cast<size_t>(std::round(frames / fps)) << " seconds)" << std::endl;
 
-	if (width < network_size.width or height < network_size.height)
+	if (width < network_size.width || height < network_size.height)
 	{
 		std::cout << "ERROR: \"" << filename << "\" [" << width << " x " << height << "] is smaller than the network size " << network_size << "!" << std::endl;
 		return;

@@ -11,11 +11,15 @@ IF (NOT DEFINED CMAKE_BUILD_TYPE)
 	SET (CMAKE_BUILD_TYPE Release)
 ENDIF ()
 
-SET (CMAKE_CXX_STANDARD				17	)
-SET (CMAKE_CXX_STANDARD_REQUIRED	ON	)
-SET (CMAKE_CXX_EXTENSIONS			OFF	)
+# Set default compile flags for GCC
+if(CMAKE_COMPILER_IS_GNUCXX)
+	message(STATUS "GCC detected, adding compile flags")
 
-ADD_DEFINITIONS ("-Wall -Wextra -Werror -Wno-unused-parameter -Wshadow")
+	SET (CMAKE_CXX_STANDARD				17	)
+	SET (CMAKE_CXX_STANDARD_REQUIRED	ON	)
+	SET (CMAKE_CXX_EXTENSIONS			OFF	)
+	ADD_DEFINITIONS ("-Wall -Wextra -Werror -Wno-unused-parameter -Wshadow")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 FIND_PACKAGE (Threads	REQUIRED)
 FIND_PACKAGE (OpenCV	REQUIRED)
