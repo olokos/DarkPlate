@@ -1,12 +1,14 @@
 // DarkHelp then pulls in OpenCV and much more, so this keeps the headers simple.
 #include <DarkHelp.hpp>
 
+#include <main.h>
 #include <fstream> // needed for Ubuntu 18.04
 
 
-const std::string darkplate_configuration	= "DarkPlate.cfg";
-const std::string darkplate_best_weights	= "DarkPlate_best.weights";
-const std::string darkplate_names			= "DarkPlate.names";
+
+const std::string darkplate_configuration	= "own_darkmark_dataset.cfg";
+const std::string darkplate_best_weights	= "own_darkmark_dataset_best.weights";
+const std::string darkplate_names			= "own_darkmark_dataset.names";
 const size_t class_plate					= 0;
 const auto font_face						= cv::FONT_HERSHEY_PLAIN;
 const auto font_border						= 10.0;
@@ -15,7 +17,7 @@ const auto font_thickness					= 2;
 cv::Size network_size;
 
 
-void draw_label(const std::string & txt, cv::Mat & mat, const cv::Point & tl, const double factor = 1.0)
+void draw_label(const std::string & txt, cv::Mat & mat, const cv::Point & tl, const double factor) // factor default 1.0
 {
 	const auto border		= factor * font_border;
 	const auto scale		= factor * font_scale;
@@ -238,7 +240,7 @@ void process(DarkHelp::NN & nn, const std::string & filename)
 		// "steal" the duration format function in DarkHelp
 		draw_label(DarkHelp::duration_string(t2 - t1), output_frame, cv::Point(0, 0), 0.5);
 
-		cv::imshow(basename, output_frame);
+		//cv::imshow(basename, output_frame);
 		cv::waitKey(5);
 
 		output.write(output_frame);
@@ -259,7 +261,7 @@ int main(int argc, char *argv[])
 
 		// first thing we need to do is find the neural network
 		bool initialization_done = false;
-		for (const auto path : {"./", "../", "../../", "nn/", "../nn/", "../../nn/"})
+		for (const auto path : {"./", "../", "../../", "nn/", "../nn/", "../../nn/", "C:/Users/olokos/Documents/Projekty/EngineersThesisOCR/resources/nn/"})
 		{
 			const auto fn = path + darkplate_configuration;
 			std::cout << "Looking for " << fn << std::endl;
@@ -290,7 +292,7 @@ int main(int argc, char *argv[])
 		}
 		if (initialization_done == false)
 		{
-			throw std::runtime_error("failed to find the neural network DarkPlate.cfg");
+			throw std::runtime_error("failed to find the neural network " + darkplate_configuration);
 		}
 
 		// remember the size of the network, since we'll need to crop plates to this exact size
