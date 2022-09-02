@@ -16,6 +16,8 @@ const auto font_scale						= 3.5;
 const auto font_thickness					= 2;
 cv::Size network_size;
 
+std::list<std::string> listOfDetectedPlates;
+
 
 void draw_label(const std::string & txt, cv::Mat & mat, const cv::Point & tl, const double factor) // factor default 1.0
 {
@@ -96,6 +98,7 @@ void process_plate(DarkHelp::NN & nn, cv::Mat & plate, cv::Mat & output)
 	{
 		const std::string label = license_plate + " [" + std::to_string((size_t)std::round(100.0 * probability / results.size())) + "%]";
 		std::cout << "-> license plate: " << label << std::endl;
+		listOfDetectedPlates.push_back(label);
 
 		draw_label(license_plate /* label */, mat, tl);
 	}
@@ -175,8 +178,9 @@ cv::Mat process_frame(DarkHelp::NN & nn, cv::Mat & frame)
 }
 
 
-void process(DarkHelp::NN & nn, const std::string & filename)
+void process_File(DarkHelp::NN & nn, const std::string & filename)
 {
+	listOfDetectedPlates.begin();
 	std::cout << "Processing video file \"" << filename << "\"" << std::endl;
 
 	std::string basename = filename;
@@ -252,6 +256,70 @@ void process(DarkHelp::NN & nn, const std::string & filename)
 	return;
 }
 
+std::list<std::string> getListOfRecognitionsFromVideo(int argc, char* argv[])
+{
+	try
+	{
+		DarkHelp::NN nn;
+
+		// first thing we need to do is find the neural network
+		bool initialization_done = false;
+		for (const auto path : { "./", "../", "../../", "nn/", "../nn/", "../../nn/", "C:/Users/olokos/Documents/Projekty/EngineersThesisOCR/resources/nn/" })
+		{
+			const auto fn = path + darkplate_configuration;
+			std::cout << "Looking for " << fn << std::endl;
+			std::ifstream ifs(fn);
+			if (ifs.is_open())
+			{
+				const DarkHelp::EDriver driver = DarkHelp::EDriver::kDarknet;
+
+				ifs.close();
+				std::cout << "Found neural network: " << fn << std::endl;
+				const std::string cfg = fn;
+				const std::string names = path + darkplate_names;
+				const std::string weights = path + darkplate_best_weights;
+				nn.init(cfg, weights, names, true, driver);
+				nn.config.enable_debug = false;
+				nn.config.annotation_auto_hide_labels = false;
+				nn.config.annotation_include_duration = false;
+				nn.config.annotation_include_timestamp = false;
+				nn.config.enable_tiles = false;
+				nn.config.combine_tile_predictions = true;
+				nn.config.include_all_names = true;
+				nn.config.names_include_percentage = true;
+				nn.config.threshold = 0.25;
+				nn.config.sort_predictions = DarkHelp::ESort::kUnsorted;
+				initialization_done = true;
+				break;
+			}
+		}
+		if (initialization_done == false)
+		{
+			throw std::runtime_error("failed to find the neural network " + darkplate_configuration);
+		}
+
+		// remember the size of the network, since we'll need to crop plates to this exact size
+		network_size = nn.network_size();
+
+		for (int idx = 1; idx < argc; idx++)
+		{
+			process_File(nn, argv[idx]);
+		}
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << std::endl << "ERROR: " << e.what() << std::endl;
+		return std::list<std::string>{"Error code 1!", e.what()}; //Return the error as error code + stack trace in list
+	}
+	catch (...)
+	{
+		std::cout << std::endl << "ERROR: unknown exception" << std::endl;
+		return std::list<std::string>{"Unknown error!", "Code 2"}; //Return the error as error code + stack trace in list
+	}
+
+	return listOfDetectedPlates;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -300,7 +368,7 @@ int main(int argc, char *argv[])
 
 		for (int idx = 1; idx < argc; idx ++)
 		{
-			process(nn, argv[idx]);
+			process_File(nn, argv[idx]);
 		}
 	}
 	catch (const std::exception & e)
