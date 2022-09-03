@@ -15,4 +15,4 @@ void __declspec(dllexport) process_File(DarkHelp::NN& nn, const std::string& fil
 
 int __declspec(dllexport) main(int argc, char* argv[]);
 
-std::vector<std::string> __declspec(dllexport) getListOfRecognitionsFromVideo(std::string & filenameToProcess);
+extern "C" std::vector<std::string> __declspec(dllexport) getListOfRecognitionsFromVideo(std::string & filenameToProcess);

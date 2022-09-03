@@ -1,0 +1,5 @@
+classes = 37
+train = C:/DarknetOpenCV/DarkPlate/nn/own_darkmark_dataset_train.txt
+valid = C:/DarknetOpenCV/DarkPlate/nn/own_darkmark_dataset_valid.txt
+names = C:/DarknetOpenCV/DarkPlate/nn/own_darkmark_dataset.names
+backup = C:/DarknetOpenCV/DarkPlate/nn
