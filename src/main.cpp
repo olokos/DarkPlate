@@ -1,7 +1,7 @@
 // DarkHelp then pulls in OpenCV and much more, so this keeps the headers simple.
 #include <DarkHelp.hpp>
 
-#include <main.h>
+#include "main.h"
 #include <fstream> // needed for Ubuntu 18.04
 
 
