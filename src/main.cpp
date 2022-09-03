@@ -16,7 +16,7 @@ const auto font_scale						= 3.5;
 const auto font_thickness					= 2;
 cv::Size network_size;
 
-std::list<std::string> listOfDetectedPlates;
+std::vector<std::string> listOfDetectedPlates;
 
 
 void draw_label(const std::string & txt, cv::Mat & mat, const cv::Point & tl, const double factor) // factor default 1.0
@@ -180,7 +180,6 @@ cv::Mat process_frame(DarkHelp::NN & nn, cv::Mat & frame)
 
 void process_File(DarkHelp::NN & nn, const std::string & filename)
 {
-	listOfDetectedPlates.begin();
 	std::cout << "Processing video file \"" << filename << "\"" << std::endl;
 
 	std::string basename = filename;
@@ -256,7 +255,7 @@ void process_File(DarkHelp::NN & nn, const std::string & filename)
 	return;
 }
 
-std::list<std::string> getListOfRecognitionsFromVideo(int argc, char* argv[])
+std::vector<std::string> getListOfRecognitionsFromVideo(std::string& filenameToProcess)
 {
 	try
 	{
@@ -301,20 +300,21 @@ std::list<std::string> getListOfRecognitionsFromVideo(int argc, char* argv[])
 		// remember the size of the network, since we'll need to crop plates to this exact size
 		network_size = nn.network_size();
 
-		for (int idx = 1; idx < argc; idx++)
-		{
-			process_File(nn, argv[idx]);
-		}
+		//for (int idx = 1; idx < argv.length(); idx++)
+		//{ 
+
+		process_File(nn, filenameToProcess); //Only single file!
+		//}
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << std::endl << "ERROR: " << e.what() << std::endl;
-		return std::list<std::string>{"Error code 1!", e.what()}; //Return the error as error code + stack trace in list
+		return std::vector<std::string>{"Error code 1!", e.what()}; //Return the error as error code + stack trace in list
 	}
 	catch (...)
 	{
 		std::cout << std::endl << "ERROR: unknown exception" << std::endl;
-		return std::list<std::string>{"Unknown error!", "Code 2"}; //Return the error as error code + stack trace in list
+		return std::vector<std::string>{"Unknown error!", "Code 2"}; //Return the error as error code + stack trace in list
 	}
 
 	return listOfDetectedPlates;
