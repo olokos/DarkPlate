@@ -217,7 +217,7 @@ void process_File(DarkHelp::NN & nn, const std::string & filename)
 	}
 
 	cv::VideoWriter output;
-	output.open(basename + "_output.mp4", cv::VideoWriter::fourcc('m', 'p', '4', 'v'), fps, cv::Size(width, height));
+	output.open("output/" + basename + "_output.mp4", cv::VideoWriter::fourcc('m', 'p', '4', 'v'), fps, cv::Size(width, height)); //FIXME: "output/" + at the beggining causes saving saving the output video to fail, which is good for now!
 
 	size_t frame_counter = 0;
 	while (true)
